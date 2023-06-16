@@ -7,7 +7,7 @@ Command-line interface (CLI) tool built with Go that helps enforce conventional 
 To install, follow these steps:
 
 - Clone the repository: `git clone https://github.com/ivanatias/commits-assistant-cli.git`
-- Navigate to the cloned directory: `cd git-commits-assistant`
+- Navigate to the cloned directory: `cd commits-assistant-cli`
 - Build the tool using Go: `go build -o gca main.go`
 
 ### Important: 
