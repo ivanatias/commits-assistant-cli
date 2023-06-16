@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/ivantias/commits-assistant-cli/style"
 )
 
 func OutputCommand(command string) []string {
@@ -70,12 +72,12 @@ func ExecCommandLoop(scanner *bufio.Scanner, command string) {
 		case "y":
 			shouldContinueProcess = true
 			RunCommand(command)
-			Green.Println(resultOutput)
+			style.Green.Println(resultOutput)
 		case "n":
-			Red.Println("Exiting commits assistant...")
+			style.Red.Println("Exiting commits assistant...")
 			os.Exit(0)
 		default:
-			Red.Print("Invalid input. Please enter Y or N: ")
+			style.Red.Print("Invalid input. Please enter Y or N: ")
 			continue
 		}
 	}

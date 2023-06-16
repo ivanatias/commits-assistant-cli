@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ivantias/commits-assistant-cli/style"
 	"github.com/ivantias/commits-assistant-cli/utils"
 	"github.com/manifoldco/promptui"
 )
@@ -18,8 +19,8 @@ func main() {
 	isRepoInitialized := utils.CheckGitRepoInitialized()
 
 	if !isRepoInitialized {
-		fmt.Println("Git repo not initialized.")
-		fmt.Print("Want to initialize git repo? (Y/N): ")
+		style.Yellow.Println("⚠️ Git repo not initialized.")
+		style.Yellow.Print("Want to initialize git repo? (Y/N): ")
 
 		utils.ExecCommandLoop(scanner, "git init")
 	}
@@ -28,8 +29,8 @@ func main() {
 	modifiedFiles := utils.OutputCommand("git status --porcelain")
 
 	if len(stagedFiles) == 0 && len(modifiedFiles) > 0 {
-		utils.Yellow.Println("⚠️ There are no staged files for committing.")
-		utils.Yellow.Println("List of non-staged modified files:")
+		style.Yellow.Println("⚠️ There are no staged files for committing.")
+		style.Yellow.Println("List of non-staged modified files:")
 
 		var filesToOutput string
 
@@ -37,15 +38,15 @@ func main() {
 			filesToOutput += file + "\n"
 		}
 
-		utils.Cyan.Println(filesToOutput)
-		utils.Yellow.Print("Do you want to add all files to staging? (Y/N): ")
+		style.Cyan.Println(filesToOutput)
+		style.Yellow.Print("Do you want to add all files to staging? (Y/N): ")
 
 		utils.ExecCommandLoop(scanner, "git add .")
 	}
 
 	if len(modifiedFiles) == 0 && len(stagedFiles) == 0 {
-		utils.Yellow.Println("There are no changes to commit.")
-		utils.Red.Println("Exiting commits assistant...")
+		style.Yellow.Println("There are no changes to commit.")
+		style.Red.Println("Exiting commits assistant...")
 		os.Exit(0)
 	}
 
@@ -79,9 +80,9 @@ func main() {
 	fullCommitMsg := fmt.Sprintf("%s: %s", commitPrefix, message)
 	commitCommand := fmt.Sprintf(`git commit -m "%s"`, fullCommitMsg)
 
-	utils.Cyan.Printf("Committing ---> %s\n", strings.TrimSpace(fullCommitMsg))
+	style.Cyan.Printf("Committing ---> %s\n", strings.TrimSpace(fullCommitMsg))
 
 	utils.Commit(commitCommand)
 
-	utils.Green.Println("Successful commit. Thanks for using the assistant!")
+	style.Green.Println("Successful commit. Thanks for using the assistant!")
 }
