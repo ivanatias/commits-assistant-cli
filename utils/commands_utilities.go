@@ -70,12 +70,12 @@ func ExecCommandLoop(scanner *bufio.Scanner, command string) {
 		case "y":
 			shouldContinueProcess = true
 			RunCommand(command)
-			fmt.Println(resultOutput)
+			Green.Println(resultOutput)
 		case "n":
-			fmt.Println("Exiting commits assistant...")
+			Red.Println("Exiting commits assistant...")
 			os.Exit(0)
 		default:
-			fmt.Print("Invalid input. Please enter Y or N: ")
+			Red.Print("Invalid input. Please enter Y or N: ")
 			continue
 		}
 	}

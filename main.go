@@ -28,8 +28,8 @@ func main() {
 	modifiedFiles := utils.OutputCommand("git status --porcelain")
 
 	if len(stagedFiles) == 0 && len(modifiedFiles) > 0 {
-		fmt.Println("There are no staged files for committing.")
-		fmt.Println("List of non-staged modified files:")
+		utils.Yellow.Println("⚠️ There are no staged files for committing.")
+		utils.Yellow.Println("List of non-staged modified files:")
 
 		var filesToOutput string
 
@@ -37,15 +37,15 @@ func main() {
 			filesToOutput += file + "\n"
 		}
 
-		fmt.Println(filesToOutput)
-		fmt.Print("Do you want to add all files to staging? (Y/N): ")
+		utils.Cyan.Println(filesToOutput)
+		utils.Yellow.Print("Do you want to add all files to staging? (Y/N): ")
 
 		utils.ExecCommandLoop(scanner, "git add .")
 	}
 
 	if len(modifiedFiles) == 0 && len(stagedFiles) == 0 {
-		fmt.Println("There are no changes to commit.")
-		fmt.Println("Exiting commits assistant...")
+		utils.Yellow.Println("There are no changes to commit.")
+		utils.Red.Println("Exiting commits assistant...")
 		os.Exit(0)
 	}
 
@@ -79,9 +79,9 @@ func main() {
 	fullCommitMsg := fmt.Sprintf("%s: %s", commitPrefix, message)
 	commitCommand := fmt.Sprintf(`git commit -m "%s"`, fullCommitMsg)
 
-	fmt.Printf("Committing ---> %s\n", strings.TrimSpace(fullCommitMsg))
+	utils.Cyan.Printf("Committing ---> %s\n", strings.TrimSpace(fullCommitMsg))
 
 	utils.Commit(commitCommand)
 
-	fmt.Println("Successful commit. Thanks for using the assistant!")
+	utils.Green.Println("Successful commit. Thanks for using the assistant!")
 }
