@@ -32,7 +32,7 @@ var CommitTypes = []CommitType{
 		"A code change that neither fixes a bug nor adds a feature",
 	},
 	{
-		"⚡️ perf",
+		"🚀 perf",
 		"A code change that improves performance",
 	},
 	{
@@ -40,7 +40,7 @@ var CommitTypes = []CommitType{
 		"Adding missing tests",
 	},
 	{
-		"⏱ chore",
+		"👀 chore",
 		"Changes to the build process or auxiliary tools",
 	},
 	{
@@ -62,7 +62,7 @@ func FormatCommitOptions(commitTypes []CommitType) []string {
 
 	for i, commitType := range commitTypes {
 		var descPadding = longestPrefixLength - len(commitType.Name)
-		descPad := strings.Repeat(" ", descPadding+2)
+		descPad := strings.Repeat(" ", descPadding)
 		options[i] = fmt.Sprintf("%s: %s%s", commitType.Name, descPad, commitType.Description)
 	}
 
