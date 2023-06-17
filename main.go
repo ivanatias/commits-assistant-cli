@@ -39,13 +39,13 @@ func main() {
 		}
 
 		style.Cyan.Println(filesToOutput)
-		style.Yellow.Print("Do you want to add all files to staging? (Y/N): ")
+		style.Cyan.Print("Do you want to add all files to staging? (Y/N): ")
 
 		utils.ExecCommandLoop(scanner, "git add .")
 	}
 
 	if len(modifiedFiles) == 0 && len(stagedFiles) == 0 {
-		style.Yellow.Println("There are no changes to commit.")
+		style.Red.Println("⚠️ There are no changes to commit.")
 		style.Red.Println("Exiting commits assistant...")
 		os.Exit(0)
 	}
