@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/ivantias/commits-assistant-cli/style"
 	"github.com/ivantias/commits-assistant-cli/utils"
@@ -57,11 +56,11 @@ func main() {
 
 	selectedIndex, _, err := selectPrompt.Run()
 
-	commitPrefix := utils.CommitTypes[selectedIndex].Name
-
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	commitPrefix := utils.CommitTypes[selectedIndex].Name
 
 	messagePrompt := promptui.Prompt{
 		Label: "Enter commit message",
@@ -81,10 +80,29 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fullCommitMsg := fmt.Sprintf("%s: %s", commitPrefix, message)
-	commitCommand := fmt.Sprintf(`git commit -m "%s"`, fullCommitMsg)
+	descPrompt := promptui.Prompt{
+		Label: "optional: Enter commit description (press enter to skip)",
+	}
 
-	style.Cyan.Printf("Committing ---> %s\n", strings.TrimSpace(fullCommitMsg))
+	desc, err := descPrompt.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var commitCommand string
+	var commitOutput string
+
+	if len(desc) > 0 {
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`, commitPrefix, message, desc)
+		commitOutput = fmt.Sprintf("%s: %s\n%s", commitPrefix, message, desc)
+	} else {
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s"`, commitPrefix, message)
+		commitOutput = fmt.Sprintf("%s: %s", commitPrefix, message)
+	}
+
+	style.Cyan.Println("Committing 👇")
+	fmt.Println(commitOutput + "\n")
 
 	utils.Commit(commitCommand)
 
