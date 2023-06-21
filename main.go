@@ -75,7 +75,11 @@ func main() {
 		},
 	}
 
-	message, _ := messagePrompt.Run()
+	message, err := messagePrompt.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fullCommitMsg := fmt.Sprintf("%s: %s", commitPrefix, message)
 	commitCommand := fmt.Sprintf(`git commit -m "%s"`, fullCommitMsg)
