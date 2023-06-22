@@ -81,7 +81,7 @@ func main() {
 	}
 
 	descPrompt := promptui.Prompt{
-		Label: "optional: Enter commit description (press enter to skip)",
+		Label: "Enter commit description (optional)",
 	}
 
 	desc, err := descPrompt.Run()
