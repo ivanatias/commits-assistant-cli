@@ -49,12 +49,12 @@ func main() {
 		os.Exit(0)
 	}
 
-	selectPrompt := promptui.Select{
-		Label: "Select type of commit",
+	commitTypePrompt := promptui.Select{
+		Label: "Select commit type",
 		Items: utils.FormatCommitOptions(utils.CommitTypes),
 	}
 
-	selectedIndex, _, err := selectPrompt.Run()
+	selectedIndex, _, err := commitTypePrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +62,7 @@ func main() {
 
 	commitPrefix := utils.CommitTypes[selectedIndex].Name
 
-	messagePrompt := promptui.Prompt{
+	descriptionPrompt := promptui.Prompt{
 		Label: "Enter commit message",
 		Validate: func(input string) error {
 			if len(input) == 0 {
@@ -74,17 +74,17 @@ func main() {
 		},
 	}
 
-	message, err := messagePrompt.Run()
+	description, err := descriptionPrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	descPrompt := promptui.Prompt{
-		Label: "Enter commit description (optional)",
+	bodyPrompt := promptui.Prompt{
+		Label: "Enter commit body (optional)",
 	}
 
-	desc, err := descPrompt.Run()
+	body, err := bodyPrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
@@ -101,12 +101,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var breakingChangeMsg string
+	var footer string
 	var commitCommand string
 	var commitOutput string
 
 	if isBreakingChange == "Yes" {
-		breakingChangePrompt := promptui.Prompt{
+		footerPrompt := promptui.Prompt{
 			Label: "Enter breaking change description",
 			Validate: func(input string) error {
 				if len(input) == 0 {
@@ -116,21 +116,21 @@ func main() {
 			},
 		}
 
-		breakingChangeDesc, err := breakingChangePrompt.Run()
+		footer, err = footerPrompt.Run()
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		breakingChangeMsg = fmt.Sprintf("\nBREAKING CHANGE: %s", breakingChangeDesc)
+		footer = fmt.Sprintf("\nBREAKING CHANGE: %s", footer)
 	}
 
-	if len(desc) > 0 {
-		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s" -m "%s"`, commitPrefix, message, desc, breakingChangeMsg)
-		commitOutput = fmt.Sprintf("%s: %s\n%s%s", commitPrefix, message, desc, breakingChangeMsg)
+	if len(body) > 0 {
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s" -m "%s"`, commitPrefix, description, body, footer)
+		commitOutput = fmt.Sprintf("%s: %s\n%s%s", commitPrefix, description, body, footer)
 	} else {
-		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`, commitPrefix, message, breakingChangeMsg)
-		commitOutput = fmt.Sprintf("%s: %s%s", commitPrefix, message, breakingChangeMsg)
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`, commitPrefix, description, footer)
+		commitOutput = fmt.Sprintf("%s: %s%s", commitPrefix, description, footer)
 	}
 
 	style.Cyan.Println("Committing 👇")
@@ -138,8 +138,8 @@ func main() {
 
 	utils.Commit(commitCommand)
 
-	if len(breakingChangeMsg) > 0 {
-		style.Yellow.Println("This commit should trigger a major release.")
+	if isBreakingChange == "Yes" {
+		style.Yellow.Println("IMPORTANT: This commit should trigger a major release.")
 	}
 
 	style.Green.Println("Successful commit. Thanks for using the assistant!")
