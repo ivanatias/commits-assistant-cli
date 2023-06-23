@@ -63,7 +63,11 @@ func FormatCommitOptions(commitTypes []CommitType) []string {
 	for i, commitType := range commitTypes {
 		var descPadding = longestPrefixLength - len(commitType.Name)
 		descPad := strings.Repeat(" ", descPadding)
-		options[i] = fmt.Sprintf("%s: %s%s", commitType.Name, descPad, commitType.Description)
+		options[i] = fmt.Sprintf("%s: %s%s",
+			commitType.Name,
+			descPad,
+			commitType.Description,
+		)
 	}
 
 	return options
