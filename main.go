@@ -2,14 +2,13 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/ivantias/commits-assistant-cli/prompts"
 	"github.com/ivantias/commits-assistant-cli/style"
 	"github.com/ivantias/commits-assistant-cli/utils"
-	"github.com/manifoldco/promptui"
 )
 
 func main() {
@@ -49,12 +48,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	commitTypePrompt := promptui.Select{
-		Label: "Select commit type",
-		Items: utils.FormatCommitOptions(utils.CommitTypes),
-	}
-
-	selectedIndex, _, err := commitTypePrompt.Run()
+	selectedIndex, _, err := prompts.CommitTypePrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
@@ -62,61 +56,32 @@ func main() {
 
 	commitPrefix := utils.CommitTypes[selectedIndex].Name
 
-	descriptionPrompt := promptui.Prompt{
-		Label: "Enter commit message",
-		Validate: func(input string) error {
-			if len(input) == 0 {
-				return errors.New("commit message cannot be empty")
-			} else if len(input) > 50 {
-				return errors.New("commit message cannot be longer than 50 characters")
-			}
-			return nil
-		},
-	}
-
-	description, err := descriptionPrompt.Run()
+	description, err := prompts.DescriptionPrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	bodyPrompt := promptui.Prompt{
-		Label: "Enter commit body (optional)",
-	}
-
-	body, err := bodyPrompt.Run()
+	body, err := prompts.BodyPrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	isBreakingChangePrompt := promptui.Select{
-		Label: "Does this commit break backwards compatibility?",
-		Items: []string{"No", "Yes"},
-	}
-
-	_, isBreakingChange, err := isBreakingChangePrompt.Run()
+	selectedIndex, _, err = prompts.IsBreakingChangePrompt.Run()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	isBreakingChange := utils.BreakingChangeOptions[selectedIndex].BreakingChange
 
 	var footer string
 	var commitCommand string
 	var commitOutput string
 
-	if isBreakingChange == "Yes" {
-		footerPrompt := promptui.Prompt{
-			Label: "Enter breaking change description",
-			Validate: func(input string) error {
-				if len(input) == 0 {
-					return errors.New("breaking change description cannot be empty")
-				}
-				return nil
-			},
-		}
-
-		footer, err = footerPrompt.Run()
+	if isBreakingChange {
+		footer, err = prompts.FooterPrompt.Run()
 
 		if err != nil {
 			log.Fatal(err)
@@ -126,10 +91,25 @@ func main() {
 	}
 
 	if len(body) > 0 {
-		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s" -m "%s"`, commitPrefix, description, body, footer)
-		commitOutput = fmt.Sprintf("%s: %s\n%s%s", commitPrefix, description, body, footer)
+		commitCommand = fmt.Sprintf(
+			`git commit -m "%s: %s" -m "%s" -m "%s"`,
+			commitPrefix,
+			description,
+			body,
+			footer,
+		)
+		commitOutput = fmt.Sprintf("%s: %s\n%s%s",
+			commitPrefix,
+			description,
+			body,
+			footer,
+		)
 	} else {
-		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`, commitPrefix, description, footer)
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`,
+			commitPrefix,
+			description,
+			footer,
+		)
 		commitOutput = fmt.Sprintf("%s: %s%s", commitPrefix, description, footer)
 	}
 
@@ -138,7 +118,7 @@ func main() {
 
 	utils.Commit(commitCommand)
 
-	if isBreakingChange == "Yes" {
+	if isBreakingChange {
 		style.Yellow.Println("IMPORTANT: This commit should trigger a major release.")
 	}
 
