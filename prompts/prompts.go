@@ -8,7 +8,7 @@ import (
 
 var CommitTypePrompt = promptui.Select{
 	Label: "Select commit type",
-	Items: CommitTypeSelection,
+	Items: commitTypeSelection,
 }
 
 var DescriptionPrompt = promptui.Prompt{
@@ -29,7 +29,7 @@ var BodyPrompt = promptui.Prompt{
 
 var IsBreakingChangePrompt = promptui.Select{
 	Label: "Does this commit break backwards compatibility?",
-	Items: BreakingChangeSelection,
+	Items: breakingChangeSelection,
 }
 
 var FooterPrompt = promptui.Prompt{
