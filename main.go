@@ -90,21 +90,57 @@ func main() {
 		log.Fatal(err)
 	}
 
+	isBreakingChangePrompt := promptui.Select{
+		Label: "Does this commit break backwards compatibility?",
+		Items: []string{"No", "Yes"},
+	}
+
+	_, isBreakingChange, err := isBreakingChangePrompt.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var breakingChangeMsg string
 	var commitCommand string
 	var commitOutput string
 
+	if isBreakingChange == "Yes" {
+		breakingChangePrompt := promptui.Prompt{
+			Label: "Enter breaking change description",
+			Validate: func(input string) error {
+				if len(input) == 0 {
+					return errors.New("breaking change description cannot be empty")
+				}
+				return nil
+			},
+		}
+
+		breakingChangeDesc, err := breakingChangePrompt.Run()
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		breakingChangeMsg = fmt.Sprintf("\nBREAKING CHANGE: %s", breakingChangeDesc)
+	}
+
 	if len(desc) > 0 {
-		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`, commitPrefix, message, desc)
-		commitOutput = fmt.Sprintf("%s: %s\n%s", commitPrefix, message, desc)
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s" -m "%s"`, commitPrefix, message, desc, breakingChangeMsg)
+		commitOutput = fmt.Sprintf("%s: %s\n%s%s", commitPrefix, message, desc, breakingChangeMsg)
 	} else {
-		commitCommand = fmt.Sprintf(`git commit -m "%s: %s"`, commitPrefix, message)
-		commitOutput = fmt.Sprintf("%s: %s", commitPrefix, message)
+		commitCommand = fmt.Sprintf(`git commit -m "%s: %s" -m "%s"`, commitPrefix, message, breakingChangeMsg)
+		commitOutput = fmt.Sprintf("%s: %s%s", commitPrefix, message, breakingChangeMsg)
 	}
 
 	style.Cyan.Println("Committing 👇")
 	fmt.Println(commitOutput + "\n")
 
 	utils.Commit(commitCommand)
+
+	if len(breakingChangeMsg) > 0 {
+		style.Yellow.Println("This commit should trigger a major release.")
+	}
 
 	style.Green.Println("Successful commit. Thanks for using the assistant!")
 }
