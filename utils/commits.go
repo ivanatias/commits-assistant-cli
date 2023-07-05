@@ -15,49 +15,51 @@ type BreakingChangeOption struct {
 	BreakingChange bool
 }
 
-var BreakingChangeOptions = []BreakingChangeOption{
-	{"No", false},
-	{"Yes", true},
-}
+var (
+	BreakingChangeOptions = []BreakingChangeOption{
+		{"No", false},
+		{"Yes", true},
+	}
 
-var CommitTypes = []CommitType{
-	{
-		"📦 feat",
-		"A new feature",
-	},
-	{
-		"🐛 fix",
-		"A bug fix",
-	},
-	{
-		"📃 docs",
-		"Documentation only changes",
-	},
-	{
-		"💅 style",
-		"Changes that do not affect the meaning of the code",
-	},
-	{
-		"🔧 refactor",
-		"A code change that neither fixes a bug nor adds a feature",
-	},
-	{
-		"🚀 perf",
-		"A code change that improves performance",
-	},
-	{
-		"🧪 test",
-		"Adding missing tests",
-	},
-	{
-		"👀 chore",
-		"Changes to the build process or auxiliary tools",
-	},
-	{
-		"👈 revert",
-		"Reverts a previous commit",
-	},
-}
+	CommitTypes = []CommitType{
+		{
+			"📦 feat",
+			"A new feature",
+		},
+		{
+			"🐛 fix",
+			"A bug fix",
+		},
+		{
+			"📃 docs",
+			"Documentation only changes",
+		},
+		{
+			"💅 style",
+			"Changes that do not affect the meaning of the code",
+		},
+		{
+			"🔧 refactor",
+			"A code change that neither fixes a bug nor adds a feature",
+		},
+		{
+			"🚀 perf",
+			"A code change that improves performance",
+		},
+		{
+			"🧪 test",
+			"Adding missing tests",
+		},
+		{
+			"👀 chore",
+			"Changes to the build process or auxiliary tools",
+		},
+		{
+			"👈 revert",
+			"Reverts a previous commit",
+		},
+	}
+)
 
 func FormatCommitOptions() []string {
 	var options = make([]string, len(CommitTypes))

@@ -76,9 +76,7 @@ func main() {
 
 	isBreakingChange := utils.BreakingChangeOptions[selectedIndex].BreakingChange
 
-	var footer string
-	var commitCommand string
-	var commitOutput string
+	var footer, commitCommand, commitOutput string
 
 	if isBreakingChange {
 		footer, err = prompts.FooterPrompt.Run()
